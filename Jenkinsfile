@@ -1,6 +1,6 @@
 pipeline {
    environment {
-        registryCredential = 'dockerhub'
+        registryCredential = 'dockerID'
         TIMESTAMP = new Date().format("yyyyMMdd_HHmmss")
     }
    agent any
@@ -20,7 +20,7 @@ pipeline {
             steps {
                script{
                 sh 'mvn install'
-               //  mvn install -DDB_URL=${params.DB_URL} -DDB_USER=${params.DB_USER} -DDB_PASSWORD=${params.DB_PASSWORD}
+               
             }
             }
         }
@@ -28,7 +28,7 @@ pipeline {
          steps {
             script{
                docker.withRegistry('',registryCredential){
-                  def customImage = docker.build("19982707/swe-assignment-3:${env.TIMESTAMP}")
+                  def customImage = docker.build("averma24/hw3springboot:${env.TIMESTAMP}")
                }
             }
          }
@@ -38,7 +38,7 @@ pipeline {
          steps {
             script{
                docker.withRegistry('',registryCredential){
-                  sh "docker push 19982707/swe-assignment-3:${env.TIMESTAMP}"
+                  sh "docker push averma24/hw3springboot:${env.TIMESTAMP}"
                }
             }
          }
@@ -46,7 +46,7 @@ pipeline {
       stage('Deploying to Rancher to single node(deployed in 3 replicas)') {
          steps {
             script{
-               sh "kubectl set image deployment/springdeployment container-0=19982707/swe-assignment-3:${env.TIMESTAMP} -n default"
+               sh "kubectl set image deployment/spring-boot-assignment container-5=averma24/hw3springboot:${env.TIMESTAMP} -n default"
             }
          }
       }
